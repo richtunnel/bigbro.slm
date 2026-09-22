@@ -216,3 +216,14 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+.venv/
+outputs/
+mlruns/
+wandb/
+.env
+*.egg-info/
+.DS_Store
+*.pt
+*.bin
+*.safetensors
