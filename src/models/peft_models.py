@@ -16,11 +16,12 @@ def load_tokenizer(cfg: ModelConfig):
 def load_base_model(cfg: ModelConfig, quantize: bool = True):
     bnb_config = None
     if quantize:
+        #This is what allows us to load a 7B–13B model on a single 24 GB GPU (or even smaller cards for true SLMs)
         bnb_config = BitsAndBytesConfig(
-            load_in_4bit=True,
-            bnb_4bit_quant_type="nf4",
-            bnb_4bit_compute_dtype=torch.bfloat16,
-            bnb_4bit_use_double_quant=True,
+            load_in_4bit=True,                    # Load weights in 4-bit
+            bnb_4bit_quant_type="nf4",            # NormalFloat4 quantization
+            bnb_4bit_compute_dtype=torch.bfloat16,# Compute in bfloat16
+            bnb_4bit_use_double_quant=True        # Extra compression
         )
 
     model = AutoModelForCausalLM.from_pretrained(
@@ -32,7 +33,7 @@ def load_base_model(cfg: ModelConfig, quantize: bool = True):
         attn_implementation="flash_attention_2" if cfg.use_flash_attention else "eager",
     )
     return model
-
+# PEFT Parameter-Efficient Fine-Tuning
 def create_peft_model(model, peft_cfg: PeftConfig):
     model = prepare_model_for_kbit_training(model)
     lora_config = LoraConfig(

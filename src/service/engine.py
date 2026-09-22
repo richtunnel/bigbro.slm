@@ -11,8 +11,14 @@ class SLMEngine:
             trust_remote_code=True,
             dtype="bfloat16",
         )
-        self.sampling_params = SamplingParams(
-            temperature=0.7,
+"""          temperature: sampling parameter that controls how random / creative the model’s output is.
+                0.0 = Deterministic,(Factual answers, code, math)
+                0.1 - 0.4= focused and conservative, (technical writing)
+                0.7 = balanced creativity + coherence, (normal convo)
+                1.0 = Matches original model probablities (Creative/Diverse)
+                
+ """        self.sampling_params = SamplingParams(
+            temperature=0.7, # controls how random / creative the model’s output is.
             top_p=0.9,
             max_tokens=512,
         )

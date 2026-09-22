@@ -1,4 +1,10 @@
-# src/utils/config.py
+'''
+The original model weights stay frozen.
+LoRA injects two small matrices (A and B) of rank r into selected layers.
+The update is: ΔW = (lora_alpha / r) x B @ A
+Only these tiny matrices are trained → huge memory savings.
+'''
+
 from pydantic import BaseModel, Field
 from typing import Optional, List
 from omegaconf import OmegaConf
@@ -11,12 +17,12 @@ class ModelConfig(BaseModel):
     use_flash_attention: bool = True
 
 class PeftConfig(BaseModel):
-    r: int = 16
-    lora_alpha: int = 32
-    lora_dropout: float = 0.05
-    target_modules: List[str] = ["q_proj", "k_proj", "v_proj", "o_proj"]
+    r: int = 16 # rank of low-rank matrices, higher = more params to train
+    lora_alpha: int = 32 # controls how strongly adapter influences original weights
+    lora_dropout: float = 0.05 # prevents adapter from overlifting, regularization
+    target_modules: List[str] = ["q_proj", "k_proj", "v_proj", "o_proj"] #which layers receive LoRA adapters
     bias: str = "none"
-    task_type: str = "CAUSAL_LM"
+    task_type: str = "CAUSAL_LM" # what kind of model ?
 
 class TrainingConfig(BaseModel):
     output_dir: str = "./outputs"
